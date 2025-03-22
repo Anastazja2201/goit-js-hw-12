@@ -1,7 +1,12 @@
 import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
 
-import { fetchImages, setQuery, resetPagination } from './js/pixabay-api.js';
+import {
+  fetchImages,
+  setQuery,
+  resetPagination,
+  loadMoreImages,
+} from './js/pixabay-api.js';
 import {
   renderGallery,
   showLoader,
@@ -17,10 +22,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const input = document.querySelector('input[name="search-text"]');
   const loadMoreBtn = document.querySelector('.load-more');
 
-
   hideLoader();
   hideLoadMoreButton();
-
 
   form.addEventListener('submit', async event => {
     event.preventDefault();
@@ -44,7 +47,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (hits.length === 0) {
         iziToast.warning({
-          message: 'Sorry, there are no images matching your search query. Please try again!',
+          message:
+            'Sorry, there are no images matching your search query. Please try again!',
         });
       } else {
         renderGallery(hits);
@@ -62,25 +66,24 @@ document.addEventListener('DOMContentLoaded', () => {
       hideLoader();
     }
   });
-});
-
-loadMoreBtn.addEventListener('click', async () => {
-  showLoader();
-  try {
-    const { hits, totalHits } = await loadMoreImages();
-    if (hits.length > 0) {
-      renderGallery(hits);
-      scrollPageAfterLoad();
-      if (hits.length < totalHits) {
-        showLoadMoreButton();
-      } else {
-        hideLoadMoreButton();
+  loadMoreBtn.addEventListener('click', async () => {
+    showLoader();
+    try {
+      const { hits, totalHits } = await loadMoreImages();
+      if (hits.length > 0) {
+        renderGallery(hits);
+        scrollPageAfterLoad();
+        if (hits.length < totalHits) {
+          showLoadMoreButton();
+        } else {
+          hideLoadMoreButton();
+        }
       }
+    } catch (error) {
+      iziToast.error({ message: 'Error loading more images.' });
+      console.error(error);
+    } finally {
+      hideLoader();
     }
-  } catch (error) {
-    iziToast.error({ message: 'Error loading more images.' });
-    console.error(error);
-  } finally {
-    hideLoader();
-  }
+  });
 });
