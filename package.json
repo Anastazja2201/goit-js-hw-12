@@ -14,9 +14,10 @@
     "postcss-sort-media-queries": "^5.2.0",
     "vite": "^5.4.6"
   },
-  "author": "Alexander Repeta <alexander.repeta@gmail.com>",
+  "author": "Anastazja Notarieva <a.notarieva@gmail.com>",
   "license": "ISC",
   "dependencies": {
+    "axios": "^1.8.4",
     "izitoast": "^1.4.0",
     "pixabay-api": "^1.0.4",
     "simplelightbox": "^2.14.3",
