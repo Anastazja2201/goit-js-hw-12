@@ -6,7 +6,10 @@ import {
   setQuery,
   resetPagination,
   loadMoreImages,
+  getCurrentPage,
+  getPerPage,
 } from './js/pixabay-api.js';
+
 import {
   renderGallery,
   showLoader,
@@ -33,6 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (searchQuery === '') {
       iziToast.error({
         message: 'Please enter a search term!',
+        position: 'topRight',
       });
       return;
     }
@@ -42,17 +46,21 @@ document.addEventListener('DOMContentLoaded', () => {
     clearGallery();
     hideLoadMoreButton();
     showLoader();
+
     try {
       const { hits, totalHits } = await fetchImages(searchQuery);
+      const perPage = getPerPage();
 
       if (hits.length === 0) {
         iziToast.warning({
           message:
             'Sorry, there are no images matching your search query. Please try again!',
-        });
+            position: 'topRight',
+          });
       } else {
         renderGallery(hits);
-        if (hits.length < totalHits) {
+
+        if (perPage * getCurrentPage() < totalHits) {
           showLoadMoreButton();
         }
       }
@@ -60,7 +68,8 @@ document.addEventListener('DOMContentLoaded', () => {
       iziToast.error({
         message:
           'An error occurred while fetching images. Please try again later.',
-      });
+          position: 'topRight',
+        });
       console.error('Error fetching images:', error);
     } finally {
       hideLoader();
@@ -68,19 +77,28 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   loadMoreBtn.addEventListener('click', async () => {
     showLoader();
+
     try {
       const { hits, totalHits } = await loadMoreImages();
+      const perPage = getPerPage();
+
       if (hits.length > 0) {
         renderGallery(hits);
         scrollPageAfterLoad();
-        if (hits.length < totalHits) {
-          showLoadMoreButton();
-        } else {
-          hideLoadMoreButton();
-        }
+      }
+
+       if (perPage * getCurrentPage() >= totalHits) {
+        hideLoadMoreButton();
+        iziToast.info({
+          message: "We're sorry, but you've reached the end of search results.",
+          position: 'topRight',
+        });
       }
     } catch (error) {
-      iziToast.error({ message: 'Error loading more images.' });
+      iziToast.error({
+        message: 'Error loading more images.',
+        position: 'topRight',
+      });
       console.error(error);
     } finally {
       hideLoader();

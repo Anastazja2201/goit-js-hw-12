@@ -30,13 +30,8 @@ export const fetchImages = async (searchQuery, page = 1) => {
 };
 
 export const loadMoreImages = async () => {
-  if (!currentQuery) return;
+  if (!currentQuery) return { hits: [] };
   if (currentPage * PER_PAGE >= totalHits) {
-    iziToast.show({
-      message: "We're sorry, but you've reached the end of search results.",
-      position: 'topRight',
-      color: 'red',
-    });
     return { hits: [] };
   }
   currentPage += 1;
@@ -47,9 +42,12 @@ export const resetPagination = () => {
   currentPage = 1;
 };
 
-export const setQuery = (query) => {
+export const setQuery = query => {
   if (currentQuery !== query) {
     currentQuery = query;
     resetPagination();
   }
 };
+
+export const getCurrentPage = () => currentPage;
+export const getPerPage = () => PER_PAGE;

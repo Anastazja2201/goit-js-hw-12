@@ -1,5 +1,3 @@
-import iziToast from 'izitoast';
-import 'izitoast/dist/css/iziToast.min.css';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
@@ -11,16 +9,6 @@ const lightbox = new SimpleLightbox('.gallery a', {
 });
 
 export const renderGallery = images => {
-  gallery.innerHTML = '';
-
-  if (images.length === 0) {
-    iziToast.error({
-      message:
-        'Sorry, there are no images matching your search query. Please try again!',
-    });
-    return;
-  }
-
   const markup = images
     .map(
       image => `
@@ -64,7 +52,7 @@ export const hideLoadMoreButton = () => {
 };
 
 export const scrollPageAfterLoad = () => {
-  const galleryItem = document.querySelector('.gallery-item');
+  const galleryItem = document.querySelector('.gallery-item:last-child');
   if (!galleryItem) return;
 
   const itemHeight = galleryItem.getBoundingClientRect().height;
